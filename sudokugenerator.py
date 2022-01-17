@@ -2,11 +2,12 @@ import random
 import math
 import copy
 
+
 class sudoku():
 
-    def __init__(self):
+    def __init__(self): 
         self.size = 9
-        self.empty_slots = 30
+        self.empty_slots = 40
         self.root = int(math.sqrt(self.size))
         self.all_choices = list(range(1, self.size + 1))
         self.grid = [[0]*self.size for _ in range(self.size)]
@@ -15,7 +16,7 @@ class sudoku():
         
 
     
-    def findSpaces(self): #fidns all cells with a 0
+    def find0(self): # Löytää paikan jossa on nolla
         for row in self.grid:
             for col in row:
                 if col == 0:
@@ -24,20 +25,20 @@ class sudoku():
         return False
 
    
-    def getchoices(self, y, x): #returns all the possible choices for a cell
+    def getchoices(self, y, x): # Antaa kaikki mahdolliset numerot koordinaateille
 
-        #Defining x and y values
         x_value = x
         y_value = y
-        #Checking what numbers the row and column have
+        # Katsoo läpi kaikki numerot samalla rivillä
         choices_row = [x for x in self.grid[y_value] if x > 0]
 
+        # Katsoo läpi kaikki numerot jotka ovat samassa sarakkeessa
         choices_column = []
         for row in self.grid:
             if row[x_value] > 0:
                 choices_column.append(row[x_value])
 
-        #Checking what numbers the box has
+        # Katsoo läpi kaikki numerot jotka ovat samassa 3x3 laatikossa
         in_box = []
         box_x = x_value // self.root
         box_y = y_value // self.root
@@ -47,15 +48,15 @@ class sudoku():
                 if self.grid[i][j] > 0:
                     in_box.append(self.grid[i][j])
 
-        #Combining these three parameters
+        # Yhdistää kaikki mahdolliset numerot rivin, sarakkeen sekä laatikon mukaan
         common_members = [x for x in self.all_choices if x not in choices_column and x not in choices_row and x not in in_box]
         random.shuffle(common_members)
         return common_members
 
 
     
-    def generate(self): # solves a grid using recursion
-        zeros = self.findSpaces()
+    def generate(self): # Tekee ratkaistun sudokun rekursion avulla
+        zeros = self.find0()
 
         if not zeros:
             return True
@@ -72,7 +73,9 @@ class sudoku():
             self.grid[row][col] = 0
         return False
 
-    def solveForDelete(self, row, col): #A solver for the remover
+
+
+    def solveForDelete(self, row, col): # Ratkaisee sudokun valitusta paikasta
 
         common_members = self.getchoices(row, col)
 
@@ -88,7 +91,7 @@ class sudoku():
 
 
 
-    def findSpacesForSolve(self): #Gives the coordinates of all available spaces
+    def find0ForSolve(self): # Antaa kaikki koordinaatit joissa numero on 0
         coordinates = []
         for row in self.grid:
             indexcol = -1
@@ -102,8 +105,8 @@ class sudoku():
 
 
 
-    def findNumberOfSolutions(self): #If there are multiple it returns False
-        coordinates = self.findSpacesForSolve()
+    def findNumberOfSolutions(self): #Funktio joka hälyttää jos on monta eri ratkaisua
+        coordinates = self.find0ForSolve()
         for coordinate in coordinates:
             sudokucopy = copy.deepcopy(self)
             if sudokucopy.solveForDelete(coordinate[0], coordinate[1]) != self.solvedgrid:
@@ -112,7 +115,7 @@ class sudoku():
 
 
 
-    def generatePuzzle(self): #Removes numbers until it reaches a goal or has tried 100 times
+    def generatePuzzle(self): # Ottaa pois numeroita kunnes on saavuttanut tavoitteensa tai on epäonnistunut tarpeeksi monta kertaa
         counter = 0
         tries = 0
         while counter < self.empty_slots:
@@ -133,7 +136,7 @@ class sudoku():
                 counter += 1
 
 
-    def print_grid(self): #Prints the grid in a nice format
+    def print_grid(self): #Näyttää sudokutehtävän hienossa muodossa
         for i in range(len(self.grid)):
             if i % self.root == 0 and i != 0:
                 print("_ " * (self.size + ((self.root-1)*2)) + "\n")
@@ -149,10 +152,14 @@ class sudoku():
 
 
 
-def main():
+
+
+def main(): #Main-funktio joka kontrolloi kaikkia funktioita sekä luokkia
+    print("")
     a = sudoku()
     a.generate()
     a.print_grid()
+    print(" ")
     a.solvedgrid = copy.deepcopy(a.grid)
     a.generatePuzzle()
     a.print_grid()
