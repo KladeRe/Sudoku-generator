@@ -16,7 +16,7 @@ class sudoku():
         
 
     
-    def find0(self): # Löytää paikan jossa on nolla
+    def find0(self): # Finds a space with a zero
         for row in self.grid:
             for col in row:
                 if col == 0:
@@ -25,20 +25,20 @@ class sudoku():
         return False
 
    
-    def getchoices(self, y, x): # Antaa kaikki mahdolliset numerot koordinaateille
+    def getchoices(self, y, x): # Gives all the possible numbers that can be put in a cell
 
         x_value = x
         y_value = y
-        # Katsoo läpi kaikki numerot samalla rivillä
+        # Checks all the numbers on the same row
         choices_row = [x for x in self.grid[y_value] if x > 0]
 
-        # Katsoo läpi kaikki numerot jotka ovat samassa sarakkeessa
+        # Checks all the numbers on the same column
         choices_column = []
         for row in self.grid:
             if row[x_value] > 0:
                 choices_column.append(row[x_value])
 
-        # Katsoo läpi kaikki numerot jotka ovat samassa 3x3 laatikossa
+        # Checks all the numbers in the same 3x3 box
         in_box = []
         box_x = x_value // self.root
         box_y = y_value // self.root
@@ -48,14 +48,14 @@ class sudoku():
                 if self.grid[i][j] > 0:
                     in_box.append(self.grid[i][j])
 
-        # Yhdistää kaikki mahdolliset numerot rivin, sarakkeen sekä laatikon mukaan
+        # Combines all three parameters
         common_members = [x for x in self.all_choices if x not in choices_column and x not in choices_row and x not in in_box]
         random.shuffle(common_members)
         return common_members
 
 
     
-    def generate(self): # Tekee ratkaistun sudokun rekursion avulla
+    def generate(self): # Generates a solved sudoku using recursion
         zeros = self.find0()
 
         if not zeros:
@@ -75,7 +75,7 @@ class sudoku():
 
 
 
-    def solveForDelete(self, row, col): # Ratkaisee sudokun valitusta paikasta
+    def solveForDelete(self, row, col): # Solves a sudoku from a specific spot
 
         common_members = self.getchoices(row, col)
 
@@ -91,7 +91,7 @@ class sudoku():
 
 
 
-    def find0ForSolve(self): # Antaa kaikki koordinaatit joissa numero on 0
+    def find0ForSolve(self): # Gives all coordinates with a 0
         coordinates = []
         for row in self.grid:
             indexcol = -1
@@ -105,7 +105,7 @@ class sudoku():
 
 
 
-    def findNumberOfSolutions(self): #Funktio joka hälyttää jos on monta eri ratkaisua
+    def findNumberOfSolutions(self): # A function that gives False if there are many solutions
         coordinates = self.find0ForSolve()
         for coordinate in coordinates:
             sudokucopy = copy.deepcopy(self)
@@ -115,7 +115,7 @@ class sudoku():
 
 
 
-    def generatePuzzle(self): # Ottaa pois numeroita kunnes on saavuttanut tavoitteensa tai on epäonnistunut tarpeeksi monta kertaa
+    def generatePuzzle(self): # Deletes numbers until the desired amount is met or it has tried 100 times
         counter = 0
         tries = 0
         while counter < self.empty_slots:
@@ -136,7 +136,7 @@ class sudoku():
                 counter += 1
 
 
-    def print_grid(self): #Näyttää sudokutehtävän hienossa muodossa
+    def print_grid(self): #Prints the sudoku ina nice format
         for i in range(len(self.grid)):
             if i % self.root == 0 and i != 0:
                 print("_ " * (self.size + ((self.root-1)*2)) + "\n")
@@ -154,7 +154,7 @@ class sudoku():
 
 
 
-def main(): #Main-funktio joka kontrolloi kaikkia funktioita sekä luokkia
+def main(): #Main-function that controls the class sudoku and its functions
     print("")
     a = sudoku()
     a.generate()
